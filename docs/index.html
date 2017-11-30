@@ -132,6 +132,207 @@ $(document).ready(function () {
 </div>
 <div id="data-wrangling-with-dplyr" class="section level2">
 <h2>Data Wrangling with <code>dplyr</code></h2>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Warning: package 'tidyverse' was built under R version 3.4.2</code></pre>
+<pre><code>## ── Attaching packages ────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.4     
+## ✔ tibble  1.3.4          ✔ dplyr   0.7.4     
+## ✔ tidyr   0.7.2          ✔ stringr 1.2.0     
+## ✔ readr   1.1.1          ✔ forcats 0.2.0</code></pre>
+<pre><code>## Warning: package 'purrr' was built under R version 3.4.2</code></pre>
+<pre><code>## Warning: package 'dplyr' was built under R version 3.4.2</code></pre>
+<pre><code>## ── Conflicts ───────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>gapminder &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   country = col_character(),
+##   year = col_integer(),
+##   pop = col_double(),
+##   continent = col_character(),
+##   lifeExp = col_double(),
+##   gdpPercap = col_double()
+## )</code></pre>
+<pre class="r"><code>gapminder</code></pre>
+<pre><code>## # A tibble: 1,704 x 6
+##        country  year      pop continent lifeExp gdpPercap
+##          &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Afghanistan  1952  8425333      Asia  28.801  779.4453
+##  2 Afghanistan  1957  9240934      Asia  30.332  820.8530
+##  3 Afghanistan  1962 10267083      Asia  31.997  853.1007
+##  4 Afghanistan  1967 11537966      Asia  34.020  836.1971
+##  5 Afghanistan  1972 13079460      Asia  36.088  739.9811
+##  6 Afghanistan  1977 14880372      Asia  38.438  786.1134
+##  7 Afghanistan  1982 12881816      Asia  39.854  978.0114
+##  8 Afghanistan  1987 13867957      Asia  40.822  852.3959
+##  9 Afghanistan  1992 16317921      Asia  41.674  649.3414
+## 10 Afghanistan  1997 22227415      Asia  41.763  635.3414
+## # ... with 1,694 more rows</code></pre>
+<pre class="r"><code>## useful functions to get to know your data:
+head(gapminder) # show the first 6 rows of the data</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##       country  year      pop continent lifeExp gdpPercap
+##         &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Afghanistan  1952  8425333      Asia  28.801  779.4453
+## 2 Afghanistan  1957  9240934      Asia  30.332  820.8530
+## 3 Afghanistan  1962 10267083      Asia  31.997  853.1007
+## 4 Afghanistan  1967 11537966      Asia  34.020  836.1971
+## 5 Afghanistan  1972 13079460      Asia  36.088  739.9811
+## 6 Afghanistan  1977 14880372      Asia  38.438  786.1134</code></pre>
+<pre class="r"><code>tail(gapminder) # show the last 6 rows of data</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##    country  year      pop continent lifeExp gdpPercap
+##      &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Zimbabwe  1982  7636524    Africa  60.363  788.8550
+## 2 Zimbabwe  1987  9216418    Africa  62.351  706.1573
+## 3 Zimbabwe  1992 10704340    Africa  60.377  693.4208
+## 4 Zimbabwe  1997 11404948    Africa  46.809  792.4500
+## 5 Zimbabwe  2002 11926563    Africa  39.989  672.0386
+## 6 Zimbabwe  2007 12311143    Africa  43.487  469.7093</code></pre>
+<pre class="r"><code>head(gapminder, 10) # say how many!</code></pre>
+<pre><code>## # A tibble: 10 x 6
+##        country  year      pop continent lifeExp gdpPercap
+##          &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Afghanistan  1952  8425333      Asia  28.801  779.4453
+##  2 Afghanistan  1957  9240934      Asia  30.332  820.8530
+##  3 Afghanistan  1962 10267083      Asia  31.997  853.1007
+##  4 Afghanistan  1967 11537966      Asia  34.020  836.1971
+##  5 Afghanistan  1972 13079460      Asia  36.088  739.9811
+##  6 Afghanistan  1977 14880372      Asia  38.438  786.1134
+##  7 Afghanistan  1982 12881816      Asia  39.854  978.0114
+##  8 Afghanistan  1987 13867957      Asia  40.822  852.3959
+##  9 Afghanistan  1992 16317921      Asia  41.674  649.3414
+## 10 Afghanistan  1997 22227415      Asia  41.763  635.3414</code></pre>
+<pre class="r"><code>tail(gapminder, 9)</code></pre>
+<pre><code>## # A tibble: 9 x 6
+##    country  year      pop continent lifeExp gdpPercap
+##      &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Zimbabwe  1967  4995432    Africa  53.995  569.7951
+## 2 Zimbabwe  1972  5861135    Africa  55.635  799.3622
+## 3 Zimbabwe  1977  6642107    Africa  57.674  685.5877
+## 4 Zimbabwe  1982  7636524    Africa  60.363  788.8550
+## 5 Zimbabwe  1987  9216418    Africa  62.351  706.1573
+## 6 Zimbabwe  1992 10704340    Africa  60.377  693.4208
+## 7 Zimbabwe  1997 11404948    Africa  46.809  792.4500
+## 8 Zimbabwe  2002 11926563    Africa  39.989  672.0386
+## 9 Zimbabwe  2007 12311143    Africa  43.487  469.7093</code></pre>
+<pre class="r"><code>## check out the structure of your data
+str(gapminder)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    1704 obs. of  6 variables:
+##  $ country  : chr  &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; &quot;Afghanistan&quot; ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ pop      : num  8425333 9240934 10267083 11537966 13079460 ...
+##  $ continent: chr  &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; &quot;Asia&quot; ...
+##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+##  $ gdpPercap: num  779 821 853 836 740 ...
+##  - attr(*, &quot;spec&quot;)=List of 2
+##   ..$ cols   :List of 6
+##   .. ..$ country  : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ year     : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_integer&quot; &quot;collector&quot;
+##   .. ..$ pop      : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   .. ..$ continent: list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_character&quot; &quot;collector&quot;
+##   .. ..$ lifeExp  : list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   .. ..$ gdpPercap: list()
+##   .. .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_double&quot; &quot;collector&quot;
+##   ..$ default: list()
+##   .. ..- attr(*, &quot;class&quot;)= chr  &quot;collector_guess&quot; &quot;collector&quot;
+##   ..- attr(*, &quot;class&quot;)= chr &quot;col_spec&quot;</code></pre>
+<pre class="r"><code>## column names 
+names(gapminder)</code></pre>
+<pre><code>## [1] &quot;country&quot;   &quot;year&quot;      &quot;pop&quot;       &quot;continent&quot; &quot;lifeExp&quot;   &quot;gdpPercap&quot;</code></pre>
+<pre class="r"><code>## dimensions of the data
+dim(gapminder)</code></pre>
+<pre><code>## [1] 1704    6</code></pre>
+<pre class="r"><code>ncol(gapminder)</code></pre>
+<pre><code>## [1] 6</code></pre>
+<pre class="r"><code>nrow(gapminder)</code></pre>
+<pre><code>## [1] 1704</code></pre>
+<pre class="r"><code>## combine with c()
+c(nrow(gapminder), ncol(gapminder))</code></pre>
+<pre><code>## [1] 1704    6</code></pre>
+<pre class="r"><code>## summary statistics
+summary(gapminder)</code></pre>
+<pre><code>##    country               year           pop             continent        
+##  Length:1704        Min.   :1952   Min.   :6.001e+04   Length:1704       
+##  Class :character   1st Qu.:1966   1st Qu.:2.794e+06   Class :character  
+##  Mode  :character   Median :1980   Median :7.024e+06   Mode  :character  
+##                     Mean   :1980   Mean   :2.960e+07                     
+##                     3rd Qu.:1993   3rd Qu.:1.959e+07                     
+##                     Max.   :2007   Max.   :1.319e+09                     
+##     lifeExp        gdpPercap       
+##  Min.   :23.60   Min.   :   241.2  
+##  1st Qu.:48.20   1st Qu.:  1202.1  
+##  Median :60.71   Median :  3531.8  
+##  Mean   :59.47   Mean   :  7215.3  
+##  3rd Qu.:70.85   3rd Qu.:  9325.5  
+##  Max.   :82.60   Max.   :113523.1</code></pre>
+<pre class="r"><code>## for everything above, we were operating on the whole gapminder dataset.
+
+head(gapminder$lifeExp)</code></pre>
+<pre><code>## [1] 28.801 30.332 31.997 34.020 36.088 38.438</code></pre>
+<p><code>read_csv</code> is from the <code>readr</code> package (part of the tidyverse). It is not <code>read.csv</code>, which is part of base R.</p>
+</div>
+<div id="actually-working-with-dplyr" class="section level2">
+<h2>Actually working with dplyr</h2>
+<p>filter</p>
+<pre class="r"><code>filter(gapminder, lifeExp &lt; 29)</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##       country  year     pop continent lifeExp gdpPercap
+##         &lt;chr&gt; &lt;int&gt;   &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Afghanistan  1952 8425333      Asia  28.801  779.4453
+## 2      Rwanda  1992 7290203    Africa  23.599  737.0686</code></pre>
+<pre class="r"><code>filter(gapminder, country == &quot;Mexico&quot;)</code></pre>
+<pre><code>## # A tibble: 12 x 6
+##    country  year       pop continent lifeExp gdpPercap
+##      &lt;chr&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+##  1  Mexico  1952  30144317  Americas  50.789  3478.126
+##  2  Mexico  1957  35015548  Americas  55.190  4131.547
+##  3  Mexico  1962  41121485  Americas  58.299  4581.609
+##  4  Mexico  1967  47995559  Americas  60.110  5754.734
+##  5  Mexico  1972  55984294  Americas  62.361  6809.407
+##  6  Mexico  1977  63759976  Americas  65.032  7674.929
+##  7  Mexico  1982  71640904  Americas  67.405  9611.148
+##  8  Mexico  1987  80122492  Americas  69.498  8688.156
+##  9  Mexico  1992  88111030  Americas  71.455  9472.384
+## 10  Mexico  1997  95895146  Americas  73.670  9767.298
+## 11  Mexico  2002 102479927  Americas  74.902 10742.441
+## 12  Mexico  2007 108700891  Americas  76.195 11977.575</code></pre>
+<pre class="r"><code>sweden &lt;- filter(gapminder, country == &quot;Sweden&quot;)
+mean(sweden$lifeExp)</code></pre>
+<pre><code>## [1] 76.177</code></pre>
+<pre class="r"><code>mean(filter(gapminder, country == &quot;Sweden&quot;)$lifeExp)</code></pre>
+<pre><code>## [1] 76.177</code></pre>
+<pre class="r"><code>## pipe operator `%&gt;%` 
+
+## same output!
+gapminder %&gt;% head(3)</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##       country  year      pop continent lifeExp gdpPercap
+##         &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Afghanistan  1952  8425333      Asia  28.801  779.4453
+## 2 Afghanistan  1957  9240934      Asia  30.332  820.8530
+## 3 Afghanistan  1962 10267083      Asia  31.997  853.1007</code></pre>
+<pre class="r"><code>head(gapminder, 3)</code></pre>
+<pre><code>## # A tibble: 3 x 6
+##       country  year      pop continent lifeExp gdpPercap
+##         &lt;chr&gt; &lt;int&gt;    &lt;dbl&gt;     &lt;chr&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+## 1 Afghanistan  1952  8425333      Asia  28.801  779.4453
+## 2 Afghanistan  1957  9240934      Asia  30.332  820.8530
+## 3 Afghanistan  1962 10267083      Asia  31.997  853.1007</code></pre>
+<pre class="r"><code>## let's use the %&gt;% with our Sweden example
+sweden &lt;- filter(gapminder, country == &quot;Sweden&quot;)
+x &lt;- mean(sweden$lifeExp)
+
+## getting ahead of ourselves
+y &lt;- gapminder %&gt;% 
+  filter(country == &quot;Sweden&quot;) %&gt;% 
+  summarize(mean_lifeExp = mean(lifeExp))</code></pre>
 </div>
 
 
