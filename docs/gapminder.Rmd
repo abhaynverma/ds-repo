@@ -1,5 +1,5 @@
 ---
-title: "gapminder"
+title: "Untitled"
 author: "Julie"
 date: "11/30/2017"
 output: html_document
