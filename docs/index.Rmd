@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 (I actually didn't do this, but follow along in Ben's repo: <https://bbest.github.io/ds-repo/>)
 
 
-## Data Wrangling with `dplyr`
+## Exploring gapminder data
 
 ```{r}
 
@@ -56,9 +56,9 @@ head(gapminder$lifeExp)
 
 `read_csv` is from the `readr` package (part of the tidyverse). It is not `read.csv`, which is part of base R. 
 
-## Actually working with dplyr
+## Data wrangling with dplyr
 
-filter
+## `filter()` by rows
 ```{r}
 
 filter(gapminder, lifeExp < 29)
@@ -87,6 +87,83 @@ y <- gapminder %>%
 
 ```
 
+## `select()` by columns
+
+```{r}
+
+## select 2 columns
+select(gapminder, year, lifeExp)
+
+## with the pipe operator
+gapminder %>%
+  select(year, lifeExp) %>%
+  tail()
+
+## combine what we've learned with the pipe
+
+gapminder %>%
+  filter(country == "Cambodia") %>%
+  select(country, year, pop, gdpPercap)
+
+## same as above
+gapminder %>%
+  filter(country == "Cambodia") %>%
+  select(-continent, -lifeExp)
+
+## a few more things with `filter()`
+gapminder %>%
+  filter(country == "Mexico",
+         year == 2002)
+
+## `mutate()` to add columns
+
+gapminder %>%
+  mutate(gdp = pop * gdpPercap)
+
+## let's add an index
+test <- gapminder %>%
+  mutate(gdp = pop * gdpPercap, 
+         index = 1:nrow(gapminder)) %>%
+  tail()
+
+## not the right way, shouldn't work (only returns half)
+gapminder %>%
+  filter(country == c("Egypt", "Vietnam") )
+
+## `%in%` operator lets you filter multiple things within a `c()`
+gapminder %>%
+  filter(country %in% c("Egypt", "Vietnam") )
+
+## find the maximum gdpPercap of Egypt and Vietnam, in a new column.
+gapminder %>%
+  filter(country %in% c("Egypt", "Vietnam") ) %>%
+  mutate(max_gdpPercap = max(gdpPercap))
+
+
+## group_by() so that we can get 2 maxes
+gapminder %>%
+  filter(country %in% c("Egypt", "Vietnam") ) %>%
+  group_by(country) %>%
+  # mutate(max_gdpPercap = max(gdpPercap))
+  summarize(max_gdpPercap = max(gdpPercap))
+```
+
+## `group_by()` and `summarize()`
+
+```{r, eval=FALSE}
+
+gapminder %>%
+  group_by(country) %>%
+  summarize(max_gdpPercap = max(gdpPercap))
+
+## let's keep the year associated with that max_gdpPercap
+gapminder %>%
+  group_by(country) %>%
+  mutate(max_gdpPercap = max(gdpPercap)) %>%
+  filter(max_gdpPercap == gdpPercap) %>%
+  arrange(max_gdpPercap) # if you wanted descending order, arrange(desc(max_gdpPercap))
+
+```
 
 
 
